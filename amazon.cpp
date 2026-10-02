@@ -9,6 +9,7 @@
 #include "db_parser.h"
 #include "product_parser.h"
 #include "util.h"
+#include "mydatastore.h"
 
 using namespace std;
 struct ProdNameSorter {
@@ -29,7 +30,7 @@ int main(int argc, char* argv[])
      * Declare your derived DataStore object here replacing
      *  DataStore type to your derived type
      ****************/
-    DataStore ds;
+    MyDataStore ds;
 
 
 
@@ -48,6 +49,8 @@ int main(int argc, char* argv[])
     // Now parse the database to populate the DataStore
     if( parser.parse(argv[1], ds) ) {
         cerr << "Error parsing!" << endl;
+        //delete productSectionParser;
+        //delete userSectionParser;
         return 1;
     }
 
@@ -97,10 +100,37 @@ int main(int argc, char* argv[])
                     ds.dump(ofile);
                     ofile.close();
                 }
+                break;
                 done = true;
             }
 	    /* Add support for other commands here */
-
+      else if ( cmd == "ADD" ) {
+                string username;
+                int hit_result_index;
+                // Checks if arguments are valid and hit_result_index is within 1 to hits.size()
+                if ((ss >> username >> hit_result_index) && 
+                    (hit_result_index >= 1 && hit_result_index <= static_cast<int>(hits.size()))) {
+                    ds.addToCart(username, hits[hit_result_index - 1]);
+                } else {
+                    cout << "Invalid request" << endl;
+                }
+            }
+            else if ( cmd == "VIEWCART" ) {
+                string username;
+                if (ss >> username) {
+                    ds.viewCart(username);
+                } else {
+                    cout << "Invalid username" << endl;
+                }
+            }
+            else if ( cmd == "BUYCART" ) {
+                string username;
+                if (ss >> username) {
+                    ds.buyCart(username);
+                } else {
+                    cout << "Invalid username" << endl;
+                }
+            }
 
 
 
@@ -110,6 +140,8 @@ int main(int argc, char* argv[])
         }
 
     }
+    //delete productSectionParser;
+    //delete userSectionParser;
     return 0;
 }
 
