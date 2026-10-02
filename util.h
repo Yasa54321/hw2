@@ -13,20 +13,37 @@
 template <typename T>
 std::set<T> setIntersection(std::set<T>& s1, std::set<T>& s2)
 {
+    std::set<T> result;
+    typename std::set<T>::iterator it1 = s1.begin();
+    typename std::set<T>::iterator it2 = s2.begin();
 
-
-
-
-
+    // Advance iterators through both sorted sets in lockstep O(n1 + n2)
+    while (it1 != s1.end() && it2 != s2.end()) {
+        if (*it1 < *it2) {
+            ++it1;
+        } else if (*it2 < *it1) {
+            ++it2;
+        } else {
+            // Elements are equal -> insert into result
+            result.insert(*it1);
+            ++it1;
+            ++it2;
+        }
+    }
+    return result;
 }
 template <typename T>
 std::set<T> setUnion(std::set<T>& s1, std::set<T>& s2)
 {
+    // Start with all elements from s1
+    std::set<T> result = s1;
 
+    // Insert all elements from s2 into the result set
+    for (typename std::set<T>::iterator it = s2.begin(); it != s2.end(); ++it) {
+        result.insert(*it);
+    }
 
-
-
-
+    return result;
 }
 
 /***********************************************/
